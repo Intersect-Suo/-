@@ -15,14 +15,6 @@
 
 ## 🚀 如何使用
 
-1.  下载本项目中的 `Happy_Birthday.html` 文件。
-2.  直接使用现代浏览器（如 Chrome, Firefox, Edge）打开该文件即可体验。
+1.  下载本项目中所有文件至 ***同一个*** 文件夹。
+2.  直接使用现代浏览器（如 Edge, Chrome, Firefox）打开该文件即可体验。
 
-## 🔧 如何定制
-
-你可以轻松地修改代码来为你的朋友定制这张贺卡：
-
-在 JavaScript 代码的 `endGame` 函数中，找到以下这行代码：
-
-```javascript
-finalMessage.innerHTML = 'Happy Birthday,<br>潘嘉豪!';

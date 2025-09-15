@@ -1,116 +1,206 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 允许自动播放的元数据 -->
+    <meta name="autoplay" content="true">
     <!-- 网页标题，也是送给朋友的第一句祝福 -->
     <title>祝我的朋友20岁生日快乐！</title>
+    
+    <!-- 自动播放解决方案 -->
+    <script>
+        // 解决自动播放问题的函数
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        const unlockAudio = () => {
+            const audioCtx = new AudioContext();
+            // 创建一个空白音频缓冲区
+            const buffer = audioCtx.createBuffer(1, 1, 22050);
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioCtx.destination);
+            // 播放静音音频以解锁
+            if (source.start) {
+                source.start(0);
+            } else {
+                source.noteOn(0);
+            }
+            
+            // 移除所有事件监听器
+            document.removeEventListener('touchstart', unlockAudio);
+            document.removeEventListener('touchend', unlockAudio);
+            document.removeEventListener('click', unlockAudio);
+            document.removeEventListener('keydown', unlockAudio);
+        };
+        
+        // 添加各种事件来解锁音频
+        document.addEventListener('touchstart', unlockAudio, false);
+        document.addEventListener('touchend', unlockAudio, false);
+        document.addEventListener('click', unlockAudio, false);
+        document.addEventListener('keydown', unlockAudio, false);
+    </script>
     <style>
         /* --- 引入一款漂亮的Google在线艺术字体 'Pacifico' --- */
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
         /* --- 基础和页面样式 --- */
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* 防止出现滚动条 */
-            font-family: 'Microsoft YaHei', 'Segoe UI', 'Helvetica Neue', sans-serif; /* 设置一个优雅的通用字体 */
-            background: linear-gradient(135deg, #fce38a, #f38181); /* 温暖的渐变背景色 */
-            user-select: none; /* 禁止用户选中文本，提升游戏体验 */
+            overflow: hidden;
+            /* 防止出现滚动条 */
+            font-family: 'Microsoft YaHei', 'Segoe UI', 'Helvetica Neue', sans-serif;
+            /* 设置一个优雅的通用字体 */
+            background: linear-gradient(135deg, #fce38a, #f38181);
+            /* 温暖的渐变背景色 */
+            user-select: none;
+            /* 禁止用户选中文本，提升游戏体验 */
         }
+
         /* --- 游戏容器，所有下落的蛋糕都在这个容器里 --- */
         #game-container {
             position: absolute;
             width: 100%;
             height: 100%;
-            z-index: 10; /* 层级较低，在UI元素之下 */
+            z-index: 10;
+            /* 层级较低，在UI元素之下 */
         }
+
         /* --- 蛋糕元素样式 --- */
         .cake {
-            position: absolute; /* 绝对定位，方便用JS控制位置 */
-            font-size: 60px; /* 蛋糕大小 */
-            cursor: pointer; /* 鼠标悬停时显示为小手图标 */
-            transition: transform 0.1s ease-out; /* 悬停放大效果的平滑过渡 */
-            z-index: 20; /* 确保蛋糕在游戏容器的最上层 */
-            text-shadow: 0 3px 5px rgba(0,0,0,0.2); /* 给蛋糕一个轻微的阴影，增加立体感 */
+            position: absolute;
+            /* 绝对定位，方便用JS控制位置 */
+            font-size: 60px;
+            /* 蛋糕大小 */
+            cursor: pointer;
+            /* 鼠标悬停时显示为小手图标 */
+            transition: transform 0.1s ease-out;
+            /* 悬停放大效果的平滑过渡 */
+            z-index: 20;
+            /* 确保蛋糕在游戏容器的最上层 */
+            text-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            /* 给蛋糕一个轻微的阴影，增加立体感 */
         }
+
         /* 鼠标悬停在蛋糕上时的放大效果 */
         .cake:hover {
             transform: scale(1.15);
         }
+
         /* --- 游戏UI元素容器 --- */
         #ui-container {
             position: relative;
-            z-index: 100; /* UI层级最高，确保在所有游戏元素之上 */
+            z-index: 100;
+            /* UI层级最高，确保在所有游戏元素之上 */
             width: 100%;
             height: 100%;
-            display: flex; /* 使用Flexbox布局 */
-            flex-direction: column; /* 垂直排列子元素 */
-            justify-content: center; /* 垂直居中 */
-            align-items: center; /* 水平居中 */
-            pointer-events: none; /* 容器本身不响应鼠标事件，可以让事件穿透到下层元素 */
+            display: flex;
+            /* 使用Flexbox布局 */
+            flex-direction: column;
+            /* 垂直排列子元素 */
+            justify-content: center;
+            /* 垂直居中 */
+            align-items: center;
+            /* 水平居中 */
+            pointer-events: none;
+            /* 容器本身不响应鼠标事件，可以让事件穿透到下层元素 */
         }
+
         /* --- 开始按钮样式 --- */
         #start-btn {
-            padding: 30px 60px; /* 内边距，增大按钮的可点击区域 */
-            font-size: 80px; /* 增大字体，使其更醒目 */
+            padding: 30px 60px;
+            /* 内边距，增大按钮的可点击区域 */
+            font-size: 80px;
+            /* 增大字体，使其更醒目 */
             font-weight: bold;
-            color: #FFD700; /* 金色，增加喜庆感 */
-            background-color: #ff6b6b; /* 按钮背景色 */
-            border: none; /* 去掉边框 */
-            border-radius: 60px; /* 圆角，使其看起来更柔和 */
+            color: #FFD700;
+            /* 金色，增加喜庆感 */
+            background-color: #ff6b6b;
+            /* 按钮背景色 */
+            border: none;
+            /* 去掉边框 */
+            border-radius: 60px;
+            /* 圆角，使其看起来更柔和 */
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* 漂亮的阴影效果 */
-            transition: all 0.2s ease; /* 所有变化的平滑过渡 */
-            pointer-events: auto; /* 覆盖父容器的none，使按钮可以被点击 */
-            margin-bottom: 40px; /* 与下方的提示文字增加间距 */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            /* 漂亮的阴影效果 */
+            transition: all 0.2s ease;
+            /* 所有变化的平滑过渡 */
+            pointer-events: auto;
+            /* 覆盖父容器的none，使按钮可以被点击 */
+            margin-bottom: 40px;
+            /* 与下方的提示文字增加间距 */
         }
 
         /* 鼠标悬停在开始按钮上时的效果 */
         #start-btn:hover {
-            background-color: #ff4757; /* 颜色加深 */
-            transform: translateY(-3px); /* 按钮轻微上浮 */
-            box-shadow: 0 12px 25px rgba(0,0,0,0.35); /* 阴影加重，产生立体感 */
+            background-color: #ff4757;
+            /* 颜色加深 */
+            transform: translateY(-3px);
+            /* 按钮轻微上浮 */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+            /* 阴影加重，产生立体感 */
         }
+
         /* --- 开始提示文字样式 --- */
         #start-hint {
-            margin-top: 0; /* 移除默认的上外边距 */
-            font-size: 55px; /* 增大字体 */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4); /* 文字阴影 */
-            letter-spacing: 1px; /* 字符间距 */
-            color: #FF69B4; /* 浪漫的粉色 */
+            margin-top: 0;
+            /* 移除默认的上外边距 */
+            font-size: 55px;
+            /* 增大字体 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+            /* 文字阴影 */
+            letter-spacing: 1px;
+            /* 字符间距 */
+            color: #FF69B4;
+            /* 浪漫的粉色 */
         }
 
         /* --- 积分板样式 --- */
         #score-board {
-            position: fixed; /* 固定在视口右上角 */
+            position: fixed;
+            /* 固定在视口右上角 */
             top: 20px;
             right: 20px;
             padding: 10px 20px;
-            background-color: rgba(255, 255, 255, 0.8); /* 半透明背景 */
+            background-color: rgba(255, 255, 255, 0.8);
+            /* 半透明背景 */
             border-radius: 10px;
             font-size: 28px;
             font-weight: bold;
             color: #d63031;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: opacity 0.5s; /* 用于实现淡出效果 */
-            pointer-events: none; /* 不响应鼠标事件 */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s;
+            /* 用于实现淡出效果 */
+            pointer-events: none;
+            /* 不响应鼠标事件 */
         }
+
         /* --- 里程碑消息显示样式 --- */
         #message-display {
-            position: fixed; /* 固定在屏幕中央 */
+            position: fixed;
+            /* 固定在屏幕中央 */
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* 精确居中 */
-            font-size: 6vw; /* 响应式字体大小，根据视口宽度变化 */
+            transform: translate(-50%, -50%);
+            /* 精确居中 */
+            font-size: 6vw;
+            /* 响应式字体大小，根据视口宽度变化 */
             font-weight: bold;
             text-align: center;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             pointer-events: none;
-            opacity: 0; /* 默认透明 */
-            transition: opacity 0.5s ease-in-out; /* 淡入淡出动画 */
+            opacity: 0;
+            /* 默认透明 */
+            transition: opacity 0.5s ease-in-out;
+            /* 淡入淡出动画 */
         }
+
         /* 当消息显示时，添加此类使其不透明 */
         #message-display.show {
             opacity: 1;
@@ -122,32 +212,55 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 200; /* 最高层级，显示在最前方 */
-            display: none; /* 默认不显示 */
-            opacity: 0; /* 默认透明 */
-            transition: opacity 1.5s ease-in; /* 缓慢淡入效果 */
+            z-index: 200;
+            /* 最高层级，显示在最前方 */
+            display: none;
+            /* 默认不显示 */
+            opacity: 0;
+            /* 默认透明 */
+            transition: opacity 1.5s ease-in;
+            /* 缓慢淡入效果 */
 
-            font-family: 'Pacifico', cursive; /* 使用引入的艺术字体 */
-            font-size: 8vw; /* 响应式大字体 */
+            font-family: 'Pacifico', cursive;
+            /* 使用引入的艺术字体 */
+            font-size: 8vw;
+            /* 响应式大字体 */
             font-weight: bold;
             text-align: center;
-            text-shadow: 4px 4px 6px rgba(0,0,0,0.4);
-            line-height: 1.6; /* 增加行高，防止多行文字重叠 */
+            text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4);
+            line-height: 1.6;
+            /* 增加行高，防止多行文字重叠 */
+
             /* 核心：创建动态彩色文字效果 */
-            background: linear-gradient(45deg, #FFD700, #FF69B4, #00CED1, #9370DB); /* 定义一个鲜艳的渐变背景 */
-            background-size: 400% 400%; /* 扩大背景尺寸，为动画做准备 */
-            -webkit-background-clip: text; /* 将背景裁剪为文字的形状 (兼容WebKit浏览器) */
-            background-clip: text; /* 标准写法 */
-            color: transparent; /* 将文字本身颜色设为透明，从而透出背景的渐变色 */
-            animation: gradient-animation 10s ease infinite; /* 应用背景位移动画 */
+            background: linear-gradient(45deg, #FFD700, #FF69B4, #00CED1, #9370DB);
+            /* 定义一个鲜艳的渐变背景 */
+            background-size: 400% 400%;
+            /* 扩大背景尺寸，为动画做准备 */
+            -webkit-background-clip: text;
+            /* 将背景裁剪为文字的形状 (兼容WebKit浏览器) */
+            background-clip: text;
+            /* 标准写法 */
+            color: transparent;
+            /* 将文字本身颜色设为透明，从而透出背景的渐变色 */
+            animation: gradient-animation 10s ease infinite;
+            /* 应用背景位移动画 */
         }
 
         /* --- 彩色文字的背景位移动画 --- */
         @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
+
         /* --- 点击蛋糕后的五彩纸屑样式 --- */
         .confetti {
             position: absolute;
@@ -157,16 +270,31 @@
             /* 动画：名称、时长、缓动函数、结束时状态 */
             animation: confetti-fall 1s ease-out forwards;
         }
+
         /* --- 五彩纸屑的下落和消失动画 --- */
         @keyframes confetti-fall {
-            0% { transform: translateY(0) rotateZ(0); opacity: 1; }
-            100% { transform: translateY(200px) rotateZ(360deg); opacity: 0; }
+            0% {
+                transform: translateY(0) rotateZ(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(200px) rotateZ(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
+
 <body>
+
     <!-- 游戏区域，用于承载所有下落的蛋糕 -->
     <div id="game-container"></div>
+
+    <!-- 添加音频元素，使用本地MP3文件 -->
+    <audio id="birthday-song" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
     <!-- UI界面容器，承载所有按钮、文字等界面元素 -->
     <div id="ui-container">
         <button id="start-btn">🎂 蛋糕流星雨 🎂</button>
@@ -177,6 +305,7 @@
         <div id="message-display"></div>
         <div id="final-message"></div>
     </div>
+
     <script>
         // --- DOM元素获取 ---
         const gameContainer = document.getElementById('game-container');
@@ -185,25 +314,87 @@
         const scoreBoard = document.getElementById('score-board');
         const messageDisplay = document.getElementById('message-display');
         const finalMessage = document.getElementById('final-message');
+        const birthdaySong = document.getElementById('birthday-song');
+
+        // 任何用户交互都尝试播放音频（如果当前是暂停状态）
+        document.addEventListener('click', function() {
+            if (birthdaySong.paused) {
+                birthdaySong.volume = 1.0; // 确保音量是最大的
+                birthdaySong.muted = false; // 确保没有静音
+                birthdaySong.play().catch(function(e) {
+                    console.error("点击后播放失败:", e);
+                });
+            }
+        });
+
         // --- 全局变量定义 ---
         let score = 0; // 当前积分
         let gameInterval = null; // 存放生成蛋糕的定时器
         let animationFrameId = null; // 存放游戏循环的动画帧ID
         let cakes = []; // 存储所有在屏幕上的蛋糕元素
         let gameEnded = false; // 游戏是否结束的标志
+
         // 定义一组喜庆的颜色，用于祝福语和彩屑
         const celebrationColors = [
             '#FF4500', '#FF1493', '#00CED1', '#FFD700',
             '#9370DB', '#32CD32', '#FF6347'
         ];
+
         // --- 事件监听 ---
-        // 为开始按钮绑定点击事件，调用startGame函数
+        // 使用更强大的方法确保音频播放
+        function tryPlayAudio() {
+            console.log("尝试播放音频...");
+            birthdaySong.volume = 1.0;
+            birthdaySong.muted = false;
+            
+            // 使用Promise包装play()方法以便更好地处理
+            const playPromise = birthdaySong.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("音频播放成功!");
+                }).catch(error => {
+                    console.log("自动播放失败:", error);
+                    // 设置一个点击事件来解锁音频
+                    document.body.addEventListener('click', function bodyClickHandler() {
+                        birthdaySong.play();
+                        console.log("通过点击事件播放音频");
+                        // 移除点击事件监听器，避免多次触发
+                        document.body.removeEventListener('click', bodyClickHandler);
+                    }, { once: true });
+                });
+            }
+        }
+
+        // 尝试多种方法触发自动播放
+        window.addEventListener('load', tryPlayAudio);
+        
+        // 添加DOMContentLoaded事件监听也尝试播放
+        document.addEventListener('DOMContentLoaded', tryPlayAudio);
+        
+        // 添加音频加载完成事件监听
+        birthdaySong.addEventListener('canplaythrough', tryPlayAudio);
+        
+        // 为开始按钮绑定点击事件，调用startGame函数和播放音乐
         startBtn.addEventListener('click', startGame);
+
         // --- 函数定义 ---
+
         /**
          * @description 开始或重置游戏
          */
         function startGame() {
+            // 确保生日歌曲播放
+            birthdaySong.volume = 1.0; // 确保音量最大
+            birthdaySong.muted = false; // 确保没有静音
+            
+            // 如果处于暂停状态，尝试播放
+            if (birthdaySong.paused) {
+                birthdaySong.play().catch(function(error) {
+                    console.log('游戏开始时播放音乐失败:', error);
+                });
+            }
+            
             // 初始化游戏状态
             score = 0;
             gameEnded = false;
@@ -220,14 +411,17 @@
             // 确保最终祝福语是隐藏的
             finalMessage.style.display = 'none';
             finalMessage.style.opacity = 0;
+
             // 清理上一次游戏的定时器和动画帧，防止叠加
             if (gameInterval) clearInterval(gameInterval);
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
             // 设置新的定时器，每800毫秒创建一个蛋糕
             gameInterval = setInterval(createCake, 800);
             // 启动游戏主循环
             gameLoop();
         }
+
         /**
          * @description 创建一个蛋糕并添加到游戏中
          */
@@ -237,18 +431,22 @@
             const cake = document.createElement('div');
             cake.textContent = '🎂';
             cake.classList.add('cake');
+
             // 随机化蛋糕的初始水平位置和下落速度
             cake.style.left = Math.random() * (window.innerWidth - 60) + 'px';
             cake.style.top = '-80px'; // 从屏幕外上方开始
             cake.dataset.speed = Math.random() * 1.5 + 1; // 存储速度值
+
             // 为每个蛋糕单独绑定点击事件
             cake.addEventListener('click', (event) => {
                 event.stopPropagation(); // 阻止事件冒泡，可选，但有时是好习惯
                 handleCakeClick(cake, event.clientX, event.clientY);
             });
+
             gameContainer.appendChild(cake);
             cakes.push(cake); // 将新蛋糕存入数组以便管理
         }
+
         /**
          * @description 游戏主循环，负责移动蛋糕
          */
@@ -259,6 +457,7 @@
                 let top = parseFloat(cake.style.top);
                 top += parseFloat(cake.dataset.speed); // 根据速度更新垂直位置
                 cake.style.top = top + 'px';
+
                 // 如果蛋糕移出屏幕下方，则从DOM和数组中移除
                 if (top > window.innerHeight) {
                     cake.remove();
@@ -268,6 +467,7 @@
             // 请求下一帧动画，形成平滑的动画循环
             animationFrameId = requestAnimationFrame(gameLoop);
         }
+
         /**
          * @description 处理蛋糕被点击的逻辑
          * @param {HTMLElement} cakeElement - 被点击的蛋糕元素
@@ -277,6 +477,7 @@
         function handleCakeClick(cakeElement, clickX, clickY) {
             // 防止重复点击或在游戏结束后点击
             if (!cakeElement.parentNode || gameEnded) return;
+
             score++; // 分数增加
             updateScoreDisplay(); // 更新分数显示
             createConfettiEffect(clickX, clickY); // 创建彩屑效果
@@ -289,6 +490,7 @@
             }
             checkMilestones(); // 检查是否达到积分里程碑
         }
+
         /**
          * @description 更新右上角的分数显示
          */
@@ -301,9 +503,11 @@
          */
         function checkMilestones() {
             if (gameEnded) return;
+
             let message = '';
             let showMessage = false;
             let messageColor = '';
+
             if (score === 5) {
                 message = '生日快乐！';
                 showMessage = true;
@@ -323,6 +527,7 @@
                 gameEnded = true; // 标记游戏结束
                 setTimeout(endGame, 3000); // 3秒后触发游戏结束动画
             }
+
             // 如果需要显示消息，则设置内容、颜色并添加 'show' 类使其可见
             if (showMessage) {
                 messageDisplay.innerHTML = message;
@@ -334,6 +539,7 @@
                 }, 2800);
             }
         }
+
         /**
          * @description 游戏结束时的最终场面
          */
@@ -341,11 +547,14 @@
             // 停止所有游戏活动
             clearInterval(gameInterval);
             cancelAnimationFrame(animationFrameId);
+
             // 清空屏幕上的所有蛋糕
             gameContainer.innerHTML = '';
             cakes = [];
+
             // 淡出积分板
             scoreBoard.style.opacity = 0;
+
             // 设置并显示最终的生日祝福语
             finalMessage.innerHTML = 'Happy Birthday,<br>潘嘉豪!';
             finalMessage.style.display = 'block';
@@ -378,6 +587,7 @@
 
                 confetti.style.transform = `translate(${randomX}px, ${randomY}px) rotateZ(${randomRotation}deg)`;
                 gameContainer.appendChild(confetti);
+
                 // 1秒后自动移除纸屑，防止DOM元素过多
                 setTimeout(() => {
                     confetti.remove();
@@ -386,4 +596,5 @@
         }
     </script>
 </body>
+
 </html>
